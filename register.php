@@ -2,6 +2,7 @@
 
 $hasParameters = true;
 $success = false;
+
 if (empty($_GET["selected"]) || empty($_GET["username"]) || empty($_GET["password"])) {
 	$hasParameters = false;
 }
@@ -115,7 +116,8 @@ if(strlen($un) > 3 && strlen($pw) > 3 ){
 	}
 	
 	if($accExists == false){
-		$sql = "INSERT INTO users (un, pw, class01, class02, reg_date)
+		if ($selected==1) {
+		$sql = "INSERT INTO users (un, pw, class01 reg_date)
 		VALUES ('$un', '$pw', '$class01', '$class02', $todayDate)";
 
 		if ($conn->query($sql) === TRUE) {
@@ -126,6 +128,19 @@ if(strlen($un) > 3 && strlen($pw) > 3 ){
 			$message = "Došlo je do greške!";
 			$messageColor = "#ff0000";
 		}
+	}else {
+		$sql = "INSERT INTO users (un, pw, class02, reg_date)
+		VALUES ('$un', '$pw', '$class01', '$class02', $todayDate)";
+
+		if ($conn->query($sql) === TRUE) {
+			$message = "Uspješno ste se registrirali na ovaj kolegij!";
+					$success = true;
+			$messageColor = "#00ff00";
+		} else {
+			$message = "Došlo je do greške!";
+			$messageColor = "#ff0000";
+		}
+	}
 	}
 	$conn->close();
 }
@@ -145,28 +160,19 @@ if(strlen($un) > 3 && strlen($pw) > 3 ){
 			<form action="register.php">
 			  <input type="hidden" name="selected" id="selected" value="<?php echo $selected; ?>"><br><br>
 			  <label class="inputLabel" for="username">Korisničko ime:</label>
-			  <input type="text" id="username" name="username"><br><br>
+			  <input type="text" placeholder="ovdje upišite svoje korisničko ime..." id="username" name="username"><br><br>
 			  <label class="inputLabel" for="password">Lozinka:</label>
-			  <input type="password" id="password" name="password"><br><br>
+			  <input type="password" placeholder="ovdje upišite svoju lozinku..." id="password" name="password"><br><br>
 			  <input type="submit" value="Registriraj se">
 			</form>
 			<b style="color:<?php echo $messageColor; ?>"><?php echo $message; ?></b>
 			<?php if($success == true){?>
-			<a href="login.php?selected=<?php echo $selected; ?>&username=<?php echo $un; ?>&password=<?php echo $pw; ?>"<b style="color:#000000">Sada se prijavi!</b></a>
+			<a href="login.php?selected=<?php echo $selected; ?>"<b style="color:#000000">Sada se prijavi!</b></a>
 			<?php } ?>
 		</div>
 		<div class="footer">
 			<b>Prijavi se na kolegij, <a href="login.php?selected=<?php echo $selected; ?>">Klikni ovdje</a>!</b>
+			<p><b>Za povratak na izbor kolegija <a href="index.php?selected=<?php echo $selected; ?>">klikni ovdje!</a></b> </p>
 		</div>
 	</body>
 </html>
-
-
-
-
-
-
-
-
-
-

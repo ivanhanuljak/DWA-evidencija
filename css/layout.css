@@ -1,16 +1,16 @@
-.indImg1{
-	position: dynamic; 
-	float: left;
-	height: 100%;
-	width: 50%;
-}
-.indImg2{
-	position: dynamic;
-	float: right;
-	height: 100%;
-	width: 50%;
-}
-.titleText{
+			.indImg1{
+				position: dynamic; 
+				float: left;
+				height: 100%;
+				width: 50%;
+			}
+			.indImg2{
+				position: dynamic;
+				float: right;
+				height: 100%;
+				width: 50%;
+			}
+			.titleText{
 				position: dynamic; 
 				float: left;
 				font-size: 30px;
@@ -22,7 +22,7 @@
 				height: 250px;
 				position: absolute;
 				top:0;
-				bottom: 20%;
+				bottom: 30%;
 				left: 0;
 				right: 0;
 				margin: auto;
@@ -32,7 +32,7 @@
 				height: 250px;
 				position: absolute;
 				top:0;
-				bottom: 20%;
+				bottom: 30%;
 				left: 0;
 				right: 0;
 				margin: auto;
@@ -89,16 +89,18 @@
 			.footer{
 				position:absolute;
 				width: 98%;
-				top: 90%;
+				top: 85%;
 				bottom: 0;
 				left: 0;
 				right: 0;
 				margin: auto;
 			}
+			
 			* {box-sizing: border-box;}
 				ul {list-style-type: none;}
 				body {font-family: Verdana, sans-serif;
 			}
+
 
 			.month {
 			  padding: 70px 25px;

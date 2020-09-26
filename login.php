@@ -2,6 +2,7 @@
 
 $hasParameters = true;
 $success = false;
+
 if (empty($_GET["selected"]) || empty($_GET["username"]) || empty($_GET["password"])) {
 	$hasParameters = false;
 }
@@ -86,6 +87,7 @@ if(strlen($un) > 3 && strlen($pw) > 3 ){
 				$message = "Pogrešna lozinka!";
 				$messageColor = "#ff0000";
 			}
+			break;
 		}
 		else {
 		  $message = "Vaš račun ne postoji!";
@@ -99,9 +101,10 @@ if(strlen($un) > 3 && strlen($pw) > 3 ){
 	  $messageColor = "#ff0000";
 	  $accExists = false;
 	}
-	
+
 	if($accExists == true){
-		$sql = "SELECT login_id, uid, class_id, checkin_date FROM activity";
+		if ($selected==1) {
+		$sql = "SELECT login_id, uid, class_id, checkin_date FROM activity1";
 		$result = $conn->query($sql);
 
 		if ($result->num_rows > 0) {
@@ -110,7 +113,7 @@ if(strlen($un) > 3 && strlen($pw) > 3 ){
 				if($row["class_id"] == $selected){
 					if($row["checkin_date"] == $todayDate){
 						$message = "Već ste se prijavili!";
-						$messageColor = "#ff0000";
+						$messageColor = "#00ff00";
 						$accLoginToday = true;
 					}
 				}
@@ -119,7 +122,7 @@ if(strlen($un) > 3 && strlen($pw) > 3 ){
 		}
 		if($accLoginToday == false){
 			
-			$sql = "INSERT INTO activity (uid, class_id, checkin_date)
+			$sql = "INSERT INTO activity1 (uid, class_id, checkin_date)
 			VALUES ('$uid', '$selected', '$todayDate')";
 
 			if ($conn->query($sql) === TRUE) {
@@ -128,6 +131,35 @@ if(strlen($un) > 3 && strlen($pw) > 3 ){
 			  //echo "Error: " . $sql . "<br>" . $conn->error;
 			}
 		}
+	}else {
+		$sql = "SELECT login_id, uid, class_id, checkin_date FROM activity2";
+		$result = $conn->query($sql);
+
+		if ($result->num_rows > 0) {
+		  while($row = $result->fetch_assoc()) {
+			if($row["uid"] == $uid){
+				if($row["class_id"] == $selected){
+					if($row["checkin_date"] == $todayDate){
+						$message = "Već ste se prijavili!";
+						$messageColor = "#00ff00";
+						$accLoginToday = true;
+					}
+				}
+			}
+		  }
+		}
+		if($accLoginToday == false){
+			
+			$sql = "INSERT INTO activity2 (uid, class_id, checkin_date)
+			VALUES ('$uid', '$selected', '$todayDate')";
+
+			if ($conn->query($sql) === TRUE) {
+			  //echo "New record created successfully";
+			} else {
+			  //echo "Error: " . $sql . "<br>" . $conn->error;
+			}
+		}
+	}
 	}
 	$conn->close();
 }
@@ -147,9 +179,9 @@ if(strlen($un) > 3 && strlen($pw) > 3 ){
 			<form action="login.php">
 			  <input type="hidden" name="selected" id="selected" value="<?php echo $selected; ?>"><br><br>
 			  <label class="inputLabel" for="username">Korisničko ime:</label>
-			  <input type="text" id="username" name="username"><br><br>
+			  <input type="text" placeholder="ovdje upišite svoje korisničko ime..." id="username" name="username"><br><br>
 			  <label class="inputLabel" for="password">Lozinka:</label>
-			  <input type="password" id="password" name="password"><br><br>
+			  <input type="password" placeholder="ovdje upišite svoju lozinku..." id="password" name="password"><br><br>
 			  <input type="submit" value="Prijavi se">
 			</form>
 			<b style="color:<?php echo $messageColor; ?>"><?php echo $message; ?></b><br><br>
@@ -159,16 +191,7 @@ if(strlen($un) > 3 && strlen($pw) > 3 ){
 		</div>
 		<div class="footer">
 			<b>Nisi registriran na ovaj kolegij? <a href="register.php?selected=<?php echo $selected; ?>">Klikni ovdje</a> i registriraj se!</b>
+			<p><b>Za povratak na izbor kolegija <a href="index.php?selected=<?php echo $selected; ?>">klikni ovdje!</a></b></p>
 		</div>
 	</body>
 </html>
-
-
-
-
-
-
-
-
-
-

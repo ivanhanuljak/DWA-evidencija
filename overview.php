@@ -4,13 +4,14 @@
 $selected = htmlspecialchars($_GET["selected"]);
 
 $displayText = "Error 104";
+
 if($selected == "1"){
 	$displayText = "Programsko inženjerstvo";
-	$class01 = 1;
+	
 }
 else if($selected == "2"){
 	$displayText = "Dinamičke web aplikacije";
-	$class02 = 1;
+	
 }
 
 
@@ -45,6 +46,7 @@ if ($result->num_rows > 0) {
 		if($row["id"] == $uid){
 			$un = $row["un"];
 			$accExists = true;
+			break;
 		}
 		else{
 			$message = "Korisnički račun nije registriran!";
@@ -58,7 +60,9 @@ else {
 }
 	
 if($accExists == true){
-	$sql = "SELECT login_id, uid, class_id, checkin_date FROM activity";
+	
+	if ($selected==1) {
+	$sql = "SELECT login_id, uid, class_id, checkin_date FROM activity1";
 	$result = $conn->query($sql);
 	if ($result->num_rows > 0) {
 		while($row = $result->fetch_assoc()) {
@@ -71,6 +75,21 @@ if($accExists == true){
 			
 		}
 	}
+} else {
+	$sql = "SELECT login_id, uid, class_id, checkin_date FROM activity2";
+	$result = $conn->query($sql);
+	if ($result->num_rows > 0) {
+		while($row = $result->fetch_assoc()) {
+			if($row["uid"] == $uid){
+				$month = explode("-", $row["checkin_date"]);
+				if($month[1] == $currentMonth){
+					array_push($attended, $month[2]);
+				}
+			}
+			
+		}
+	}
+}
 }
 $conn->close();
 
@@ -173,17 +192,15 @@ function CheckAttendanceOnDay($array, $d){
 	}
 	return false;
 }
-
-
 ?>
 
 <html>
 	<head>
-	<title>Pregled evidencije!</title>
+	<title>Pregled evidencije: <?php echo $displayText ?></title>
 		 <link rel="stylesheet" href="css/layout.css">
 	</head>
 	<body>
-		<h1 style="font-family: 'Century Gothic';color: #ff6a00;">Evidencija dolazaka za: <?php echo $un; ?></h1>
+		<h1 style="font-family: 'Century Gothic';color: #ff6a00;">Evidencija dolazaka na "<?php echo $displayText ?>" od studenta: <?php echo $un; ?></h1>
 
 		<div class="month">      
 		  <ul>
@@ -221,13 +238,23 @@ function CheckAttendanceOnDay($array, $d){
 		  <li> <?php echo CroatianGetNameOfDay(7); ?></li>
 		</ul>
 
-		<ul class="days">  
+		<ul class="days">
 		<?php
 			for($i = 0; $i<6; $i++){
 				for($j = 0; $j<7; $j++){
 					echo "<li>";
 					if($monthOverview[$i][$j] != 0){
 						$wasOnClass = CheckAttendanceOnDay($attended, $monthOverview[$i][$j]);
+						
+						$temp=0;
+						if ($wasOnClass == true){
+							$temp=1;
+						}else {
+							$temp=0;
+						}
+						
+						?><a href="insert.php?selected=<?php echo $selected; ?>&uid=<?php echo $uid; ?>&year=<?php echo $currentYear; ?>&month=<?php echo $currentMonth; ?>&day=<?php echo $monthOverview[$i][$j]; ?>&attended=<?php echo $temp; ?>"><?php
+						
 						if($wasOnClass == true){
 							echo "<span class='active'>";
 						}
@@ -251,6 +278,7 @@ function CheckAttendanceOnDay($array, $d){
 								echo "</span>";
 							}
 						}
+						?></a><?php
 					}
 					echo "</li>";
 				}
@@ -263,13 +291,3 @@ function CheckAttendanceOnDay($array, $d){
 		<div style="background-color:'#777777'"><a href="index.php">Povratak na izbornik</a></div>
 	</body>
 </html>
-
-
-
-
-
-
-
-
-
-
